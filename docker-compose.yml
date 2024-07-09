@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+    # Service pour le serveur web
+    nginx:
+        image: nginx:1.22-alpine
+        container_name: nginx
+        ports:
+            - 8008:80
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf
+            - ./:/code
+        depends_on:
+            - php
+    php:
+        build: .
+        volumes:
+            - ./:/code
+        environment:
+            - DB_CONNECTION=mysql
+            - DB_HOST=194.163.141.34
+            - DB_PORT=3306
+            - DB_DATABASE=concours
+            - DB_USERNAME=richelieu
+            - DB_PASSWORD=Azerty@123
+        expose:
+            - 9000
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: phpmyadmin
+        ports:
+            - 8000:80
+        environment:
+            - PMA_ARBITRARY=1
+            - PMA_HOST=194.163.141.34
+            - PMA_USER=richelieu
+            - PMA_PASSWORD=Azerty@123
+        depends_on:
+            - php
+        
+networks:
+    default:
+        driver: bridge
